@@ -1,0 +1,9 @@
+{
+  "defaultChain": "bellecour",
+  "projectName": "giza-score-tee",
+  "template": "JavaScript",
+  "dockerhubUsername": "ojasarora77",
+  "dockerhubAccessToken": "dckr_pat_ZpWGjIuq9GsYB5kFz91trYn4udc",
+  "walletFileName": "0xa5EBd895c62fB917d97C6F3E39A4562F1BE5CEee.json",
+  "appSecret": null
+}

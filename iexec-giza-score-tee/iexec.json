@@ -1,0 +1,13 @@
+{
+  "description": "Enhanced Giza Score algorithm for confidential agent scoring in TEE",
+  "license": "MIT",
+  "author": "Bond Credit",
+  "social": {
+    "website": "https://bondcredit.com"
+  },
+  "logo": "logo.png",
+  "categories": ["Finance", "DeFi", "Analytics"],
+  "keywords": ["giza", "scoring", "tee", "confidential", "defi"],
+  "framework": "DOCKER",
+  "checksum": "0x0000000000000000000000000000000000000000000000000000000000000000"
+}

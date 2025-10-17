@@ -1,0 +1,28 @@
+{
+  "name": "iexec-giza-score-tee",
+  "version": "1.0.0",
+  "description": "Enhanced Giza Score Algorithm in iExec TEE with CSV Data Support",
+  "main": "src/app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "node src/test-local.js",
+    "test:override": "node test-selective-override.js",
+    "create-data:custom": "WALLET_PRIVATE_KEY=$WALLET_PRIVATE_KEY node create-protected-data.js custom",
+    "create-data:minimal": "WALLET_PRIVATE_KEY=$WALLET_PRIVATE_KEY node create-minimal-data.js",
+    "grant-access": "WALLET_PRIVATE_KEY=$WALLET_PRIVATE_KEY node grant-access.js"
+  },
+  "keywords": [
+    "iexec",
+    "tee",
+    "confidential-computing",
+    "giza-score",
+    "agent-rating"
+  ],
+  "author": "Bond Credit",
+  "license": "MIT",
+  "dependencies": {
+    "@iexec/dataprotector-deserializer": "^0.1.1",
+    "@iexec/dataprotector": "^2.0.0-beta.19"
+  }
+}
