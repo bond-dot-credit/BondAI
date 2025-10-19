@@ -81,7 +81,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white">
       {/* Hero Section with 3D Background */}
-      <div className="relative bg-black">
+      <div className="relative bg-black min-h-[60vh] flex items-center">
         <div className="absolute inset-0 z-0">
           <ClientOnly>
             <PixelBlast
@@ -105,58 +105,27 @@ export default function Home() {
             />
           </ClientOnly>
         </div>
-        <div className="relative z-10 bg-gradient-to-b from-blue-900/20 to-transparent py-12">
+        <div className="relative z-10 w-full bg-gradient-to-b from-blue-900/20 via-purple-900/10 to-transparent py-24 pt-32">
           <div className="max-w-7xl mx-auto px-4">
-            <div className="text-center">
-              <img src="/bondcredit-logo-white.png" alt="BondCredit Logo" className="h-16 mx-auto mb-4" />
-              <p className="text-lg text-gray-400 mb-8">Decentralized Reputation Scoring for AI Agents using iExec TEE and ERC-8004.</p>
-              <div className="flex justify-center">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl">
-                  <div className="p-6 bg-[#0a0a0a] rounded-xl border border-blue-500/20">
-                    <h3 className="text-xl font-bold mb-2">1. Create a Job</h3>
-                    <p className="text-gray-400">A user creates a job on the ACP contract to score an AI agent.</p>
-                  </div>
-                  <div className="p-6 bg-[#0a0a0a] rounded-xl border border-blue-500/20">
-                    <h3 className="text-xl font-bold mb-2">2. iExec TEE Scoring</h3>
-                    <p className="text-gray-400">The Provider Agent triggers an iExec TEE task to confidentially calculate the agent's score.</p>
-                  </div>
-                  <div className="p-6 bg-[#0a0a0a] rounded-xl border border-purple-500/20">
-                    <h3 className="text-xl font-bold mb-2">3. Publish & Deliver</h3>
-                    <p className="text-gray-400">The score is published to the ERC-8004 Reputation Registry, and the results are delivered to the user.</p>
-                  </div>
-                </div>
+            <div className="text-center space-y-6">
+              <div className="inline-block">
+                <img src="/bondcredit-logo-white.png" alt="BondCredit Logo" className="h-20 mx-auto mb-6 opacity-90" />
+              </div>
+              <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                Decentralized Reputation Scoring for AI Agents
+              </p>
+              <p className="text-base md:text-lg text-gray-400 max-w-2xl mx-auto">
+                Powered by iExec TEE and ERC-8004 on Virtuals Protocol
+              </p>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
       {/* Main Dashboard */}
-      <div className="max-w-[1920px] w-full mx-auto px-6 py-8 mt-32">
-        <div className="mt-8">
-          <div className="bg-[#060010] border border-[#392e4e] rounded-[20px] p-6 hover:-translate-y-0.5 transition-all duration-300">
-            <HowItWorks />
-          </div>
-        </div>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-[#0a0a0a] rounded-xl border border-purple-500/20 p-6 min-h-[120px] flex flex-col justify-between">
-            <h3 className="text-sm text-gray-400">Total Jobs</h3>
-            <p className="text-3xl font-bold">{jobStats.totalJobs}</p>
-          </div>
-          <div className="bg-[#0a0a0a] rounded-xl border border-purple-500/20 p-6 min-h-[120px] flex flex-col justify-between">
-            <h3 className="text-sm text-gray-400">Active Jobs</h3>
-            <p className="text-3xl font-bold text-yellow-400">{jobStats.activeJobs}</p>
-          </div>
-          <div className="bg-[#0a0a0a] rounded-xl border border-purple-500/20 p-6 min-h-[120px] flex flex-col justify-between">
-            <h3 className="text-sm text-gray-400">Completed Jobs</h3>
-            <p className="text-3xl font-bold text-green-400">{jobStats.completedJobs}</p>
-          </div>
-          <div className="bg-[#0a0a0a] rounded-xl border border-purple-500/20 p-6 min-h-[120px] flex flex-col justify-between">
-            <h3 className="text-sm text-gray-400">Rejected Jobs</h3>
-            <p className="text-3xl font-bold text-red-400">{jobStats.rejectedJobs}</p>
-          </div>
+      <div className="max-w-[1920px] w-full mx-auto px-6 py-8">
+        <div className="mb-8">
+          <MagicBento jobStats={jobStats} />
         </div>
 
         {/* Charts Grid */}

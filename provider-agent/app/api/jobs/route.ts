@@ -10,14 +10,14 @@ export async function GET() {
     const provider = new JsonRpcProvider('https://sepolia.base.org');
     const contract = new Contract(jobOfferingAddress, JobOfferABI, provider);
 
-    // Get recent jobs (last 10000 blocks)
+    // Get recent jobs (smaller block range to avoid rate limits)
     const currentBlock = await provider.getBlockNumber();
-    const fromBlock = Math.max(0, currentBlock - 10000);
+    const fromBlock = Math.max(0, currentBlock - 5000);
 
     const events = await contract.queryFilter(
       contract.filters.JobCreated(),
       fromBlock,
-      'latest'
+      currentBlock
     );
 
     // Filter for our jobs
