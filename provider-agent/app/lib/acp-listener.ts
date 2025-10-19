@@ -1,48 +1,285 @@
+import { keccak256, toUtf8Bytes, getBytes, concat, encodeBytes32String, JsonRpcProvider, Wallet, Contract, AbiCoder } from 'ethers';
+import { IExec } from 'iexec';
+import { IExecDataProtectorCore, getWeb3Provider } from '@iexec/dataprotector';
+import axios from 'axios';
+import JSZip from 'jszip';
+// import { create } from 'ipfs-http-client';
+import JobOfferABI from '../../contract/JobOffer_ABI';
+import ReputationRegistryABI from '../../contract/ReputationRegistry_abi';
 
-import { ethers } from 'ethers';
+const jobOfferingAddress = '0x959591Bab069599cAbb2A72AA371503ba2d042FF';
+const reputationRegistryAddress = '0xB5048e3ef1DA4E04deB6f7d0423D06F63869e322';
+const identityRegistryAddress = '0x7177a6867296406881E20d6647232314736Dd09A';
 
-// TODO: Replace with the actual ABI of the JobOffering contract
-const jobOfferingAbi = [
-  // Example event: 'JobCreated(address indexed buyer, uint256 jobId)'
-  'event JobCreated(address indexed buyer, uint256 jobId)',
-];
+const sellerAgentAddress = process.env.SELLER_AGENT_WALLET_ADDRESS;
+const sellerAgentPrivateKey = process.env.SELLER_AGENT_PRIVATE_KEY;
+const whitelistedWalletPrivateKey = process.env.WHITELISTED_WALLET_PRIVATE_KEY;
+const dummyAgentPrivateKey = process.env.DUMMY_AGENT_PRIVATE_KEY;
+const dummyAgentAddress = process.env.DUMMY_AGENT_ADDRESS;
+const dummyAgentId = 1;
 
-// TODO: Replace with the actual address of the deployed JobOffering contract
-const jobOfferingAddress = '0x...'; // Address on Base testnet
+// iExec app address (lowercase as per iExec SDK)
+const iexecAppAddress = '0x2d1003f88b918828ca2377020d218e8ed6092367';
 
-/**
- * Starts listening for new job requests on the ACP JobOffering contract.
- */
+// Create an IPFS client
+// const ipfs = create({ host: 'localhost', port: 5001, protocol: 'http' });
+
+export async function handleNewJob(jobId: bigint, jobOfferingContract: Contract) {
+  console.log(`Handling new job: ${jobId.toString()}`);
+
+  try {
+    const [memos, total] = await jobOfferingContract.getMemosForPhase(jobId, 0, 0, 10);
+
+    if (total === BigInt(0) || Number(total) === 0) {
+      console.error(`No memos found for job ${jobId.toString()}`);
+      return;
+    }
+
+    const agentAddress = memos[0].content;
+    console.log(`Agent to be scored: ${agentAddress}`);
+
+    const result = await triggerIexecTask(agentAddress);
+
+    if (result && result.scoreData && result.resultUrl) {
+      await publishScore(result.scoreData, jobOfferingContract, jobId, result.resultUrl);
+    }
+
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error(`Error handling job ${jobId.toString()}:`, errorMessage);
+  }
+}
+
+interface ScoreData {
+  final_score: number;
+  [key: string]: unknown;
+}
+
+async function triggerIexecTask(agentAddress: string): Promise<{ scoreData: ScoreData, resultUrl: string } | null> {
+  if (!whitelistedWalletPrivateKey) {
+    console.error('WHITELISTED_WALLET_PRIVATE_KEY environment variable is not set.');
+    return null;
+  }
+
+  // iExec runs on Bellecour (chain 134), not Base Sepolia
+  const iexecProvider = new JsonRpcProvider('https://bellecour.iex.ec');
+  const iexecSigner = new Wallet(whitelistedWalletPrivateKey, iexecProvider);
+  const iexec = new IExec({ ethProvider: iexecSigner });
+
+  try {
+    console.log('🔐 Creating protected data for agent:', agentAddress);
+    const dataProtector = new IExecDataProtectorCore(getWeb3Provider(whitelistedWalletPrivateKey));
+    const protectedData = await dataProtector.protectData({ data: { agentAddress } });
+
+    console.log('📋 Fetching iExec orders...');
+    const apporderResult: unknown = await iexec.orderbook.fetchApporder(iexecAppAddress as never);
+    const apporder = (apporderResult as { order?: unknown }).order || apporderResult;
+    const apporderTyped = apporder as { category: number; appprice: number };
+    const workerpoolorderResult: unknown = await iexec.orderbook.fetchWorkerpoolorder({ category: apporderTyped.category } as never);
+
+    console.log('📝 Creating request order...');
+    const workerpool = (workerpoolorderResult as { order?: unknown }).order || workerpoolorderResult;
+    const workerpoolTyped = workerpool as { workerpoolprice: number };
+    const requestorderToSign = await iexec.order.createRequestorder({
+      app: iexecAppAddress,
+      category: apporderTyped.category,
+      appmaxprice: apporderTyped.appprice,
+      workerpoolmaxprice: workerpoolTyped.workerpoolprice,
+      requester: await iexecSigner.getAddress(),
+      volume: 1,
+      params: { iexec_args: agentAddress },
+      dataset: protectedData.address,
+    });
+    const requestorder = await iexec.order.signRequestorder(requestorderToSign);
+
+    console.log('🤝 Matching orders...');
+    const deal = await iexec.order.matchOrders({ apporder, workerpoolorder: workerpoolorderResult, requestorder } as never);
+    const taskId = await iexec.deal.computeTaskId((deal as { dealid: string }).dealid, 0);
+
+    console.log('⏳ Waiting for task results, taskId:', taskId);
+    const results = await iexec.task.fetchResults(taskId);
+
+    if (results && results.url) {
+      console.log('📥 Downloading results from:', results.url);
+      const response = await axios.get(results.url, { responseType: 'arraybuffer' });
+      const zip = await JSZip.loadAsync(response.data);
+      const resultFile = zip.file('giza_score_result.json');
+
+      if (resultFile) {
+        const resultContent = await resultFile.async('string');
+        const scoreData = JSON.parse(resultContent);
+        console.log('✅ Score calculated:', scoreData.final_score);
+
+        return { scoreData, resultUrl: results.url };
+      }
+    }
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('❌ Error triggering iExec task:', errorMessage);
+  }
+  return null;
+}
+
+async function publishScore(scoreData: ScoreData, jobOfferingContract: Contract, jobId: bigint, iexecResultUrl: string) {
+  if (!sellerAgentPrivateKey) {
+    console.error('SELLER_AGENT_PRIVATE_KEY environment variable is not set.');
+    return;
+  }
+
+  if (!dummyAgentPrivateKey) {
+    console.error('DUMMY_AGENT_PRIVATE_KEY environment variable is not set.');
+    return;
+  }
+
+  try {
+    // Use iExec's IPFS gateway URL directly
+    const fileuri = iexecResultUrl.replace('https://ipfs.iex.ec/ipfs/', 'ipfs://');
+    console.log('📎 Result URI:', fileuri);
+
+    const ethProvider = new JsonRpcProvider('https://sepolia.base.org');
+    const dummyAgentWallet = new Wallet(dummyAgentPrivateKey, ethProvider);
+    const providerWallet = new Wallet(sellerAgentPrivateKey, ethProvider);
+
+    const reputationRegistry = new Contract(reputationRegistryAddress, ReputationRegistryABI, dummyAgentWallet);
+
+    const feedbackAuth = {
+      agentId: dummyAgentId,
+      clientAddress: sellerAgentAddress,
+      indexLimit: 1,
+      expiry: Math.floor(Date.now() / 1000) + 3600,
+      chainId: 84532,
+      identityRegistry: identityRegistryAddress,
+      signerAddress: dummyAgentAddress,
+    };
+
+    const structHash = keccak256(AbiCoder.defaultAbiCoder().encode(['uint256', 'address', 'uint64', 'uint256', 'uint256', 'address', 'address'], Object.values(feedbackAuth)));
+    const messageHash = keccak256(toUtf8Bytes(`\x19Ethereum Signed Message:\n32${structHash.slice(2)}`));
+    const signature = await dummyAgentWallet.signMessage(getBytes(messageHash));
+
+    const feedbackAuthBytes = AbiCoder.defaultAbiCoder().encode(['uint256', 'address', 'uint64', 'uint256', 'uint256', 'address', 'address'], Object.values(feedbackAuth));
+    const fullAuth = concat([feedbackAuthBytes, signature]);
+
+    const score = Math.round(scoreData.final_score);
+    const filehash = keccak256(toUtf8Bytes(JSON.stringify(scoreData)));
+
+    console.log('📝 Publishing score to ReputationRegistry...');
+    const tx = await reputationRegistry.giveFeedback(dummyAgentId, score, encodeBytes32String('giza-score'), encodeBytes32String(''), fileuri, filehash, fullAuth);
+    await tx.wait();
+    console.log('✅ Score published:', tx.hash);
+
+    // Deliver the DeliverableMemo (provider creates the memo)
+    console.log('📤 Sending DeliverableMemo...');
+    const connectedContract = jobOfferingContract.connect(providerWallet) as Contract & { createMemo: (jobId: bigint, fileuri: string, arg3: number, arg4: boolean, arg5: number) => Promise<{ wait: () => Promise<void>; hash: string }> };
+    const deliverableMemo = await connectedContract.createMemo(jobId, fileuri, 1, false, 3);
+    await deliverableMemo.wait();
+    console.log('✅ DeliverableMemo sent:', deliverableMemo.hash);
+
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('❌ Error publishing score:', errorMessage);
+  }
+}
+
+// Track processed jobs to avoid duplicates
+const processedJobs = new Set<string>();
+let lastCheckedBlock = 0;
+
 export function startAcpListener() {
-  console.log('🚀 Starting ACP listener...');
+  if (!sellerAgentAddress) {
+    console.error('SELLER_AGENT_WALLET_ADDRESS environment variable is not set.');
+    return;
+  }
 
-  // TODO: Use a more robust provider for production (e.g., from environment variables)
-  const provider = new ethers.JsonRpcProvider('https://goerli.base.org');
+  console.log('🚀 Starting ACP listener for agent:', sellerAgentAddress);
 
-  const jobOfferingContract = new ethers.Contract(
-    jobOfferingAddress,
-    jobOfferingAbi,
-    provider
-  );
+  const provider = new JsonRpcProvider('https://sepolia.base.org', {
+    name: 'base-sepolia',
+    chainId: 84532
+  });
+
+  const jobOfferingContract = new Contract(jobOfferingAddress, JobOfferABI, provider);
 
   console.log('🎧 Listening for JobCreated events on contract:', jobOfferingAddress);
 
-  jobOfferingContract.on('JobCreated', (buyer, jobId, event) => {
-    console.log('🎉 New job created!');
-    console.log('  - Buyer:', buyer);
-    console.log('  - Job ID:', jobId.toString());
-    console.log('  - Transaction Hash:', event.log.transactionHash);
-
-    // TODO: Add logic to handle the new job
-    // 1. Trigger the scoring pipeline (iExec task)
-    // 2. Update job status
+  // Initialize last checked block
+  provider.getBlockNumber().then(blockNum => {
+    lastCheckedBlock = blockNum;
+    console.log(`📍 Starting from block: ${lastCheckedBlock}`);
   });
 
-  provider.on('error', (error) => {
-    console.error('Provider error:', error);
-  });
+  // Poll for new events instead of using event listeners
+  // This avoids filter expiration issues
+  const pollInterval = 12000; // Poll every 12 seconds (Base block time)
 
-  jobOfferingContract.on('error', (error) => {
-    console.error('Contract error:', error);
-  });
+  setInterval(async () => {
+    try {
+      const currentBlock = await provider.getBlockNumber();
+
+      // Only query if there are new blocks
+      if (currentBlock <= lastCheckedBlock) {
+        return;
+      }
+
+      const fromBlock = lastCheckedBlock + 1;
+      const toBlock = currentBlock;
+
+      // Query for JobCreated events in the new blocks
+      const events = await jobOfferingContract.queryFilter(
+        jobOfferingContract.filters.JobCreated(),
+        fromBlock,
+        toBlock
+      );
+
+      if (events.length > 0) {
+        console.log(`📬 Found ${events.length} new job(s) in blocks ${fromBlock}-${toBlock}`);
+
+        for (const event of events) {
+          if (!('args' in event)) continue;
+          const args = event.args as unknown as { jobId: bigint; client: string; provider: string; evaluator: string };
+          const { jobId, client, provider: providerAddr, evaluator } = args;
+          const jobKey = `${jobId.toString()}-${event.blockNumber}`;
+
+          // Skip if already processed
+          if (processedJobs.has(jobKey)) {
+            continue;
+          }
+
+          processedJobs.add(jobKey);
+
+          console.log('🎉 New job created!', {
+            jobId: jobId.toString(),
+            client,
+            provider: providerAddr,
+            evaluator,
+            block: event.blockNumber
+          });
+
+          if (providerAddr.toLowerCase() === sellerAgentAddress.toLowerCase()) {
+            console.log('✅ This job is for me!');
+
+            // Handle job asynchronously
+            handleNewJob(jobId, jobOfferingContract).catch(error => {
+              console.error('❌ Error handling job:', error.message);
+            });
+          } else {
+            console.log('⏭️  Job is for another provider:', providerAddr);
+          }
+        }
+      }
+
+      lastCheckedBlock = currentBlock;
+
+      // Clean up old processed jobs (keep last 1000)
+      if (processedJobs.size > 1000) {
+        const toRemove = Array.from(processedJobs).slice(0, processedJobs.size - 1000);
+        toRemove.forEach(key => processedJobs.delete(key));
+      }
+
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error('⚠️  Polling error:', errorMessage);
+    }
+  }, pollInterval);
+
+  console.log('✅ ACP Listener initialized successfully (polling mode)');
 }
