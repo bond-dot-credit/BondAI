@@ -1,7 +1,7 @@
 # BondAI - Verifiable Reputation Scoring for AI Agents
 
 > **Hackathon Cluster:** Agent Infrastructure & DeFi x AI
-> **Demo:** [bondai-demo.vercel.app](https://bondai-demo.vercel.app) (replace with actual URL)
+> **Demo:** [bondai-demo.vercel.app](https://bond-ai-liart.vercel.app/) 
 > **Main Platform:** [bond.credit](https://bond.credit)
 
 ## 🎯 Project Overview
@@ -25,6 +25,165 @@ BondAI provides **confidential, autonomous reputation scoring** that:
 - ✅ Uses standardized metrics and metadata adapters for agent rating
 
 **BondAI doesn't just provide credit scores** - it provides reputation weighting for financial agents, enabling them to capitalize and scale their operations.
+
+---
+
+## 🌟 Built on Virtuals Protocol - The Perfect Foundation
+
+### Why Virtuals ACP is Essential to BondAI
+
+BondAI is **deeply integrated** with Virtuals Protocol's Agent Commerce Protocol (ACP), making it a showcase for how ACP enables complex, multi-step autonomous services:
+
+**1. Job Lifecycle Management** 🔄
+- ACP handles the complete credit scoring workflow from request to delivery
+- Client creates job → Provider processes → Score delivered → Payment settled
+- **This proves ACP can orchestrate sophisticated financial services**, not just simple tasks
+
+**2. Agent-to-Agent Commerce** 💼
+- BondAI acts as a **Provider Agent** serving other AI agents
+- Demonstrates true agent economy: agents rating agents, autonomously
+- **First reputation-as-a-service** running entirely on ACP infrastructure
+
+**3. Payment & Settlement** 💰
+- Leverages ACP's built-in payment mechanisms for service delivery
+- Automatic escrow and release on job completion
+- **Shows ACP can handle high-value transactions** (credit scoring determines capital access)
+
+**4. Memo System for Data Exchange** 📋
+- Uses ACP memos to communicate agent addresses and scoring results
+- Proves ACP's messaging layer can handle structured financial data
+- **Demonstrates ACP's versatility** beyond simple text exchanges
+
+**5. Event-Driven Architecture** ⚡
+- Provider agent listens to `JobCreated` events in real-time
+- Autonomous processing without human intervention
+- **Showcases ACP's suitability for always-on financial services**
+
+### BondAI Makes ACP More Valuable
+
+**For Virtuals Protocol:**
+- ✅ **First credit/reputation service** on ACP - expands use cases beyond chat/creation
+- ✅ **Production-ready infrastructure** - shows ACP can handle mission-critical services
+- ✅ **Attracts DeFi agents** - brings financial AI agents to the ecosystem
+- ✅ **Creates network effects** - more agents need reputation → more agents use BondAI → more agents join Virtuals
+
+**For Agent Developers:**
+- ✅ **Essential service** - every agent eventually needs reputation/credit
+- ✅ **Easy integration** - just create a job on ACP, scoring happens automatically
+- ✅ **Composable** - other services can query ERC-8004 scores for risk assessment
+- ✅ **Trust layer** - enables agents to transact with confidence
+
+**For the Ecosystem:**
+- ✅ **Unlocks new markets** - agent lending, agent insurance, agent bonds
+- ✅ **Increases ACP volume** - recurring service (agents need periodic re-scoring)
+- ✅ **Proves real utility** - not a demo, but a fundamental infrastructure piece
+- ✅ **Path to mainnet** - clear value prop for production deployment
+
+---
+
+## 🚀 How Virtuals ACP Powers BondAI
+
+### The ACP Advantage
+
+**Without ACP, BondAI would need:**
+- Custom job queue infrastructure ❌
+- Manual payment collection and escrow ❌
+- Agent discovery and routing logic ❌
+- Dispute resolution mechanisms ❌
+- Service registry and reputation ❌
+
+**With ACP, BondAI gets:**
+- Battle-tested job orchestration ✅
+- Built-in payment and settlement ✅
+- Automatic agent matching ✅
+- Protocol-level guarantees ✅
+- Native integration with Virtuals ecosystem ✅
+
+### Real ACP Integration Examples
+
+**Job Creation (Client-Side):**
+```solidity
+// Any agent can request scoring via ACP
+IJobOffering.createJob(
+    providerAgent,        // BondAI provider
+    evaluatorAgent,       // Score validator
+    budgetAmount,         // Payment for service
+    deadline
+);
+
+// Attach agent address to score
+createMemo(jobId, agentAddress, REQUEST_PHASE);
+```
+
+**Job Processing (Provider-Side):**
+```typescript
+// BondAI listens to ACP events
+contract.on("JobCreated", async (jobId, client, provider) => {
+  if (provider === ourAddress) {
+    // 1. Extract agent address from memos
+    const agentAddress = await getAgentFromMemo(jobId);
+
+    // 2. Score in iExec TEE
+    const score = await computeInTEE(agentAddress);
+
+    // 3. Publish to ERC-8004
+    await publishScore(agentAddress, score);
+
+    // 4. Deliver via ACP
+    await createMemo(jobId, scoreProof, DELIVERABLE_PHASE);
+  }
+});
+```
+
+**This is ACP at its best** - complex multi-chain workflow, fully autonomous, real value creation.
+
+---
+
+## 💎 Why BondAI is the Perfect ACP Showcase
+
+### Technical Sophistication
+1. **Multi-Chain Orchestration**
+   - ACP on Base Sepolia (job management)
+   - iExec on Bellecour (computation)
+   - Back to Base (score publishing)
+   - **Proves ACP can coordinate cross-chain workflows**
+
+2. **Real-Time Event Processing**
+   - Sub-12 second job detection
+   - Automatic provider response
+   - **Shows ACP's suitability for time-sensitive services**
+
+3. **Stateful Service Delivery**
+   - Tracks job progress through phases
+   - Maintains data across chains
+   - **Demonstrates ACP can handle complex state machines**
+
+### Business Model Alignment
+1. **Recurring Revenue**
+   - Agents need periodic re-scoring (monthly/quarterly)
+   - **Creates sustained ACP transaction volume**
+
+2. **Network Effects**
+   - More agents → more reputation data → better scoring models
+   - **Grows with the Virtuals ecosystem**
+
+3. **B2B2C Model**
+   - BondAI serves agents (B2B)
+   - Agents serve end users (B2C)
+   - **Expands ACP's addressable market**
+
+### Ecosystem Contribution
+1. **Infrastructure Primitive**
+   - Other services can build on top (lending, insurance, staking)
+   - **Makes entire ecosystem more valuable**
+
+2. **Agent Onboarding**
+   - Attracts DeFi-focused AI agents to Virtuals
+   - **Brings new user segments**
+
+3. **Real-World Use Case**
+   - Solves actual problem (agent credit access)
+   - **Proves Virtuals vision of autonomous economy**
 
 ---
 
@@ -222,7 +381,7 @@ await reputationRegistry.giveFeedback(
 ## 📊 Demo & Testing
 
 ### Live Demo
-- **URL:** [bondai-demo.vercel.app](https://bondai-demo.vercel.app)
+- **URL:** [bondai-demo.vercel.app](https://bond-ai-liart.vercel.app/)
 - **Network:** Base Sepolia (Chain ID: 84532)
 - **Status:** ✅ Live and processing jobs
 
@@ -239,9 +398,9 @@ Full testing instructions available in [docs/testing-guide.md](./docs/testing-gu
 
 ### Transaction Examples
 
-- **First Agent Registration:** [BaseScan](https://sepolia.basescan.org/tx/REPLACE_WITH_TX)
-- **First Feedback:** [BaseScan](https://sepolia.basescan.org/tx/REPLACE_WITH_TX)
-- **Job Processing:** [BaseScan](https://sepolia.basescan.org/tx/REPLACE_WITH_TX)
+- **First Agent Registration:** [BaseScan](https://sepolia.basescan.org/tx/0x6e0baaf16d4425400a8346592f5d27fb5980e7d5ce75ce9ed2a31d0f9a3a7d21)
+- **First Feedback:** [BaseScan](https://sepolia.basescan.org/tx/0x1d485c5e1063443a67487f67c1a17dff8077aa9f53f718db83d2a2415a9b7cea )
+- **Job Processing:** [BaseScan](https://sepolia.basescan.org/tx/0x10a49258be5d4cc914a965c69893e1d9e7ad9af1d2f9e92b4ab2c003df07cac4)
 
 ---
 
@@ -298,6 +457,10 @@ Full testing instructions available in [docs/testing-guide.md](./docs/testing-gu
 - AI x Web3 integration experts
 - Committed to building the agentic economy
 
+*Developed by @ojasarora.eth*
+- GitHub: [github.com/ojasarora77](https://github.com/ojasarora77)
+- Decentralized credit infrastructure specialist
+- AI x Web3 integration expert
 ---
 
 ## 📝 Documentation
@@ -334,12 +497,6 @@ Full testing instructions available in [docs/testing-guide.md](./docs/testing-gu
 - 🎯 Enables agent commerce at scale
 - 🎯 Provides infrastructure for all agents
 - 🎯 Can become core ACP service
-
----
-
-## 📄 License
-
-MIT License - See [LICENSE](./LICENSE) for details
 
 ---
 
