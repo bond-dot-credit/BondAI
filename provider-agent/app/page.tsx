@@ -1,12 +1,15 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import ClientOnly from './components/ClientOnly';
 import JobQueueTable from './components/JobQueueTable';
 import ActivityLog from './components/ActivityLog';
 import ScoreDistributionChart from './components/ScoreDistributionChart';
 import JobsOverTimeChart from './components/JobsOverTimeChart';
 import ProcessingTimeChart from './components/ProcessingTimeChart';
 import RevenueChart from './components/RevenueChart';
+import PixelBlast from './components/PixelBlast';
+
 export default function Home() {
   const [logs, setLogs] = useState<string[]>([]);
   const [isListening, setIsListening] = useState(false);
@@ -73,15 +76,40 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <div className="bg-gradient-to-b from-purple-900/20 to-transparent">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold mb-2">Provider Agent</h1>
-            <p className="text-lg text-gray-400">ERC-8004 Score-as-a-Service</p>
-            <div className="mt-4 flex items-center justify-center gap-2">
-              <div className={`h-3 w-3 rounded-full ${isListening ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></div>
-              <span className="text-sm">{isListening ? 'Listening for jobs' : 'Initializing...'}</span>
+      {/* Hero Section with 3D Background */}
+      <div className="relative bg-black">
+        <div className="absolute inset-0 z-0">
+          <ClientOnly>
+            <PixelBlast
+              variant="circle"
+              pixelSize={6}
+              color="#B19EEF"
+              patternScale={3}
+              patternDensity={1.2}
+              pixelSizeJitter={0.5}
+              enableRipples={true}
+              rippleSpeed={0.4}
+              rippleThickness={0.12}
+              rippleIntensityScale={1.5}
+              liquid={true}
+              liquidStrength={0.12}
+              liquidRadius={1.2}
+              liquidWobbleSpeed={5}
+              speed={0.6}
+              edgeFade={0.25}
+              transparent
+            />
+          </ClientOnly>
+        </div>
+        <div className="relative z-10 bg-gradient-to-b from-purple-900/20 to-transparent py-16">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="text-center">
+              <h1 className="text-5xl md:text-6xl font-bold mb-2 leading-tight">Provider Agent</h1>
+              <p className="text-lg text-gray-400">ERC-8004 Score-as-a-Service</p>
+              <div className="mt-4 flex items-center justify-center gap-2">
+                <div className={`h-3 w-3 rounded-full ${isListening ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></div>
+                <span className="text-sm">{isListening ? 'Listening for jobs' : 'Initializing...'}</span>
+              </div>
             </div>
           </div>
         </div>
