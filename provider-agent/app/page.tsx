@@ -13,6 +13,10 @@ import MagicBento from './components/MagicBento';
 import HowItWorks from './components/HowItWorks';
 import ContractLinks from './components/ContractLinks';
 import InfoSection from './components/InfoSection';
+import ProblemSolution from './components/ProblemSolution';
+import GizaScoringGuide from './components/GizaScoringGuide';
+import ERC8004Guide from './components/ERC8004Guide';
+import WorkflowOverview from './components/WorkflowOverview';
 
 export default function Home() {
   const [logs, setLogs] = useState<string[]>([]);
@@ -81,7 +85,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white">
       {/* Hero Section with 3D Background */}
-      <div className="relative bg-black min-h-[60vh] flex items-center">
+      <div className="relative bg-black min-h-[50vh] flex items-center">
         <div className="absolute inset-0 z-0">
           <ClientOnly>
             <PixelBlast
@@ -105,25 +109,39 @@ export default function Home() {
             />
           </ClientOnly>
         </div>
-        <div className="relative z-10 w-full bg-gradient-to-b from-blue-900/20 via-purple-900/10 to-transparent py-24 pt-32">
+        <div className="relative z-10 w-full bg-gradient-to-b from-blue-900/20 via-purple-900/10 to-transparent py-16 pt-28">
           <div className="max-w-7xl mx-auto px-4">
             <div className="text-center space-y-6">
-              <div className="inline-block">
-                <img src="/bondcredit-logo-white.png" alt="BondCredit Logo" className="h-20 mx-auto mb-6 opacity-90" />
-              </div>
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                BondAI
+              </h1>
               <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
                 Decentralized Reputation Scoring for AI Agents
               </p>
               <p className="text-base md:text-lg text-gray-400 max-w-2xl mx-auto">
                 Powered by iExec TEE and ERC-8004 on Virtuals Protocol
               </p>
+              <div className="flex justify-center gap-4 pt-6">
+                <div className="px-4 py-2 bg-blue-500/10 border border-blue-500/30 rounded-full text-blue-300 text-sm">
+                  Base Sepolia
+                </div>
+                <div className="px-4 py-2 bg-green-500/10 border border-green-500/30 rounded-full text-green-300 text-sm flex items-center gap-2">
+                  <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                  Live
+                </div>
               </div>
+            </div>
             </div>
           </div>
         </div>
 
+      {/* Problem & Solution Section */}
+      <div id="problem-solution" className="-mt-8">
+        <ProblemSolution />
+      </div>
+
       {/* Main Dashboard */}
-      <div className="max-w-[1920px] w-full mx-auto px-6 py-8">
+      <div id="dashboard" className="max-w-[1920px] w-full mx-auto px-6 py-8">
         <div className="mb-8">
           <MagicBento jobStats={jobStats} />
         </div>
@@ -180,41 +198,30 @@ export default function Home() {
         </div>
 
         {/* Contract Links */}
-        <div className="mt-8">
+        <div id="contracts" className="mt-8">
           <div className="bg-[#060010] border border-[#392e4e] rounded-[20px] p-6 hover:-translate-y-0.5 transition-all duration-300">
             <ContractLinks />
           </div>
         </div>
 
+        {/* Workflow Overview */}
+        <div id="workflow" className="mt-8">
+          <WorkflowOverview />
+        </div>
+
+        {/* Step 1: Create Job */}
         <div className="mt-8">
           <InfoSection />
         </div>
 
-        {/* Manual Job Processing */}
+        {/* Step 2: Giza Scoring */}
         <div className="mt-8">
-          <div className="bg-[#060010] border border-[#392e4e] rounded-[20px] p-6 hover:-translate-y-0.5 transition-all duration-300">
-            <h2 className="text-lg font-semibold mb-4">Manual Job Processing</h2>
-            <p className="text-sm text-gray-400 mb-4">Process existing Job ID 1 manually:</p>
-            <button
-              onClick={async () => {
-                setLogs(prev => [...prev, '⏳ Triggering Job ID 1 processing...']);
-                try {
-                  const res = await fetch('/api/process-job', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ jobId: 1 })
-                  });
-                  const data = await res.json();
-                  setLogs(prev => [...prev, `✅ ${data.message}`]);
-                } catch (error: any) {
-                  setLogs(prev => [...prev, `❌ Error: ${error.message}`]);
-                }
-              }}
-              className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
-            >
-              Process Job ID 1
-            </button>
-          </div>
+          <GizaScoringGuide />
+        </div>
+
+        {/* Step 3: ERC-8004 */}
+        <div className="mt-8">
+          <ERC8004Guide />
         </div>
       </div>
     </main>
