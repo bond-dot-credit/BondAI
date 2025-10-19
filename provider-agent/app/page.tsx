@@ -9,6 +9,9 @@ import JobsOverTimeChart from './components/JobsOverTimeChart';
 import ProcessingTimeChart from './components/ProcessingTimeChart';
 import RevenueChart from './components/RevenueChart';
 import PixelBlast from './components/PixelBlast';
+import MagicBento from './components/MagicBento';
+import HowItWorks from './components/HowItWorks';
+import ContractLinks from './components/ContractLinks';
 
 export default function Home() {
   const [logs, setLogs] = useState<string[]>([]);
@@ -117,6 +120,12 @@ export default function Home() {
 
       {/* Main Dashboard */}
       <div className="max-w-[1920px] w-full mx-auto px-6 py-8">
+        <div className="mt-8">
+          <div className="bg-[#060010] border border-[#392e4e] rounded-[20px] p-6 hover:-translate-y-0.5 transition-all duration-300">
+            <HowItWorks />
+          </div>
+        </div>
+
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-[#0a0a0a] rounded-xl border border-purple-500/20 p-6 min-h-[120px] flex flex-col justify-between">
@@ -188,9 +197,16 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Contract Links */}
+        <div className="mt-8">
+          <div className="bg-[#060010] border border-[#392e4e] rounded-[20px] p-6 hover:-translate-y-0.5 transition-all duration-300">
+            <ContractLinks />
+          </div>
+        </div>
+
         {/* Manual Job Processing */}
         <div className="mt-8">
-          <div className="bg-[#0a0a0a] rounded-xl border border-purple-500/20 p-6">
+          <div className="bg-[#060010] border border-[#392e4e] rounded-[20px] p-6 hover:-translate-y-0.5 transition-all duration-300">
             <h2 className="text-lg font-semibold mb-4">Manual Job Processing</h2>
             <p className="text-sm text-gray-400 mb-4">Process existing Job ID 1 manually:</p>
             <button
