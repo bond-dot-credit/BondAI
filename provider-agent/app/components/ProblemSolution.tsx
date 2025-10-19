@@ -114,7 +114,7 @@ const ProblemSolution = () => {
               </div>
               <h3 className="text-lg font-semibold mb-2 text-pink-300">TEE Computation</h3>
               <p className="text-sm text-gray-400">
-                iExec TEE runs Giza ML scoring in secure enclave - data stays encrypted throughout
+                iExec TEE runs agentic inferance scoring in secure enclave - data stays encrypted throughout
               </p>
             </div>
 

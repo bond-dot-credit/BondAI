@@ -24,7 +24,7 @@ const ContractLinks = () => {
       description: 'Registered service provider'
     },
     {
-      name: 'Giza Scorer TEE',
+      name: 'IExec IApp Scorer TEE',
       address: '0x2d1003f88b918828ca2377020d218e8ed6092367',
       network: 'iExec Bellecour',
       explorer: 'https://explorer.iex.ec/bellecour/app/0x2d1003f88b918828ca2377020d218e8ed6092367',

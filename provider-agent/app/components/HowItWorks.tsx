@@ -19,7 +19,7 @@ const HowItWorks = () => {
     {
       number: '3',
       title: 'TEE Computation',
-      description: 'Giza scoring runs in iExec secure enclave',
+      description: 'Agentic scoring runs in iExec secure enclave',
       icon: '🔐',
       color: 'green'
     },

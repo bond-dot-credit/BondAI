@@ -10,7 +10,7 @@ const hardcodedLogs = [
   { time: '14:23:45', icon: <CloudUploadIcon sx={{ fontSize: 16, color: '#60a5fa' }} />, message: 'Protected data created for 0x289F...3cBB', color: 'text-blue-300' },
   { time: '14:23:30', icon: <FiberNewIcon sx={{ fontSize: 16, color: '#fbbf24' }} />, message: 'New job #3 detected from 0x7Ae4...82f1', color: 'text-yellow-300' },
   { time: '10:18:22', icon: <CheckCircleIcon sx={{ fontSize: 16, color: '#86efac' }} />, message: 'Job #2 completed: Score 92/100', color: 'text-green-300' },
-  { time: '10:18:10', icon: <SecurityIcon sx={{ fontSize: 16, color: '#c084fc' }} />, message: 'Giza scoring in TEE for Job #2', color: 'text-purple-300' },
+  { time: '10:18:10', icon: <SecurityIcon sx={{ fontSize: 16, color: '#c084fc' }} />, message: 'IExec scoring in TEE for Job #2', color: 'text-purple-300' },
 ];
 
 const ActivityLog = () => {
