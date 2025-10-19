@@ -44,10 +44,10 @@ const ERC8004Guide = () => {
             <div className="flex-grow">
               <div className="flex items-center gap-2 mb-2">
                 <VerifiedIcon sx={{ fontSize: 20, color: '#c084fc' }} />
-                <h4 className="font-semibold text-purple-300">Giza TEE Computation</h4>
+                <h4 className="font-semibold text-purple-300">Confidental TEE Computation</h4>
               </div>
               <p className="text-sm text-gray-400">
-                iExec TEE runs Giza ML model confidentially on Bellecour chain and computes the credit score
+                iExec TEE runs agent&apos;s data, metadata and metrics using in house TEE to confidentially compute the credit score on Bellecour chain
               </p>
             </div>
           </div>

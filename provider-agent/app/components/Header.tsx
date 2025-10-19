@@ -15,7 +15,9 @@ const Header = () => {
       <nav className="container mx-auto px-6 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <img src="/bondcredit-logo-white.png" alt="BondAI Logo" className="h-8" />
+            <a href="https://bond.credit" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
+              <img src="/bondcredit-logo-white.png" alt="BondAI Logo" className="h-8" />
+            </a>
           </div>
           <div className="flex items-center gap-8 mx-auto">
             <button
