@@ -6,11 +6,7 @@ const Header = () => {
       <nav className="container mx-auto px-6 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            {/* Logo */}
-            <svg className="h-8 w-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-            <span className="ml-3 text-white text-xl font-bold">Provider Agent</span>
+            <img src="/bondcredit-logo-white.png" alt="BondCredit Logo" className="h-8" />
           </div>
           <div className="flex items-center">
             {/* Status Indicator */}

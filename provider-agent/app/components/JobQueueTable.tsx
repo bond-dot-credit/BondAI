@@ -1,13 +1,54 @@
-import React from 'react';
+'use client';
 
-const jobs = [
-  { id: 142, agentAddress: '0x289F...3cBB', client: '0x7Ae4...82f1', status: 'Running in TEE', score: '--', processingTime: '5.2s', timestamp: '1m ago' },
-  { id: 141, agentAddress: '0x7Ae4...82f1', client: '0xClient...abc', status: 'Completed', score: '87/100', processingTime: '8.2s', timestamp: '2h ago' },
-  { id: 140, agentAddress: '0x9Bc2...4a3d', client: '0xClient...def', status: 'Completed', score: '92/100', processingTime: '9.1s', timestamp: '3h ago' },
-  { id: 139, agentAddress: '0x...4a3d', client: '0xClient...ghi', status: 'Failed', score: '--', processingTime: '10.5s', timestamp: '4h ago' },
-];
+import React, { useEffect, useState } from 'react';
+
+interface Job {
+  id: number;
+  agentAddress: string;
+  client: string;
+  status: string;
+  score: string;
+  processingTime: string;
+  timestamp: string;
+}
 
 const JobQueueTable = () => {
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const response = await fetch('/api/job-queue');
+        const data = await response.json();
+        setJobs(data.jobs || []);
+      } catch (error) {
+        console.error('Failed to fetch job queue:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJobs();
+    const interval = setInterval(fetchJobs, 5000);
+    return () => clearInterval(interval);
+  }, []);
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-gray-400">Loading jobs...</div>
+      </div>
+    );
+  }
+
+  if (jobs.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-gray-400">No jobs found</div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <h3 className="text-lg font-semibold mb-4">Job Queue</h3>
