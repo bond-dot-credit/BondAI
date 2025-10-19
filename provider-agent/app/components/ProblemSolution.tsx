@@ -43,7 +43,7 @@ const ProblemSolution = () => {
             <BoltIcon sx={{ fontSize: 40, color: '#fde047', marginBottom: 2 }} />
             <h3 className="text-lg font-semibold mb-2 text-yellow-300">Scalability</h3>
             <p className="text-sm text-gray-400">
-              Traditional credit scoring can't handle the speed and volume of agent-to-agent transactions
+              Traditional credit scoring can&apos;t handle the speed and volume of agent-to-agent transactions
             </p>
           </div>
         </div>

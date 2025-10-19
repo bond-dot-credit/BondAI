@@ -12,9 +12,10 @@ export async function POST() {
     } else {
       return NextResponse.json({ success: true, message: 'ACP Listener already running' });
     }
-  } catch (error: any) {
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Failed to start ACP listener:', error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: errorMessage }, { status: 500 });
   }
 }
 

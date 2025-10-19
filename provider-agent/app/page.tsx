@@ -3,14 +3,12 @@
 import { useEffect, useState } from 'react';
 import ClientOnly from './components/ClientOnly';
 import JobQueueTable from './components/JobQueueTable';
-import ActivityLog from './components/ActivityLog';
 import ScoreDistributionChart from './components/ScoreDistributionChart';
 import JobsOverTimeChart from './components/JobsOverTimeChart';
 import ProcessingTimeChart from './components/ProcessingTimeChart';
 import RevenueChart from './components/RevenueChart';
 import PixelBlast from './components/PixelBlast';
 import MagicBento from './components/MagicBento';
-import HowItWorks from './components/HowItWorks';
 import ContractLinks from './components/ContractLinks';
 import InfoSection from './components/InfoSection';
 import ProblemSolution from './components/ProblemSolution';
@@ -20,7 +18,6 @@ import WorkflowOverview from './components/WorkflowOverview';
 
 export default function Home() {
   const [logs, setLogs] = useState<string[]>([]);
-  const [isListening, setIsListening] = useState(false);
   const [jobStats, setJobStats] = useState({
     totalJobs: 0,
     activeJobs: 0,
@@ -36,14 +33,14 @@ export default function Home() {
         const data = await response.json();
 
         if (data.success) {
-          setIsListening(true);
           setLogs(prev => [...prev, `✅ ${data.message}`]);
         } else {
           setLogs(prev => [...prev, `❌ Error: ${data.error}`]);
         }
-      } catch (error: any) {
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         console.error('Failed to start ACP listener:', error);
-        setLogs(prev => [...prev, `❌ Error: ${error.message}`]);
+        setLogs(prev => [...prev, `❌ Error: ${errorMessage}`]);
       }
     };
 
@@ -64,15 +61,8 @@ export default function Home() {
     // Poll for status and stats updates every 5 seconds
     const interval = setInterval(async () => {
       try {
-        const [listenerRes, jobsRes] = await Promise.all([
-          fetch('/api/start-listener'),
-          fetch('/api/jobs')
-        ]);
-
-        const listenerData = await listenerRes.json();
+        const jobsRes = await fetch('/api/jobs');
         const jobsData = await jobsRes.json();
-
-        setIsListening(listenerData.listening);
         setJobStats(jobsData);
       } catch (error) {
         console.error('Failed to update stats:', error);

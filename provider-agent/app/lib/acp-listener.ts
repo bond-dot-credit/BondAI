@@ -1,4 +1,4 @@
-import { keccak256, toUtf8Bytes, getBytes, concat, encodeBytes32String, JsonRpcProvider, Wallet, Contract, AbiCoder, BigNumberish, getAddress } from 'ethers';
+import { keccak256, toUtf8Bytes, getBytes, concat, encodeBytes32String, JsonRpcProvider, Wallet, Contract, AbiCoder } from 'ethers';
 import { IExec } from 'iexec';
 import { IExecDataProtectorCore, getWeb3Provider } from '@iexec/dataprotector';
 import axios from 'axios';
@@ -30,7 +30,7 @@ export async function handleNewJob(jobId: bigint, jobOfferingContract: Contract)
   try {
     const [memos, total] = await jobOfferingContract.getMemosForPhase(jobId, 0, 0, 10);
 
-    if (total === 0n || Number(total) === 0) {
+    if (total === BigInt(0) || Number(total) === 0) {
       console.error(`No memos found for job ${jobId.toString()}`);
       return;
     }
@@ -44,12 +44,18 @@ export async function handleNewJob(jobId: bigint, jobOfferingContract: Contract)
       await publishScore(result.scoreData, jobOfferingContract, jobId, result.resultUrl);
     }
 
-  } catch (error: any) {
-    console.error(`Error handling job ${jobId.toString()}:`, error);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error(`Error handling job ${jobId.toString()}:`, errorMessage);
   }
 }
 
-async function triggerIexecTask(agentAddress: string): Promise<{ scoreData: any, resultUrl: string } | null> {
+interface ScoreData {
+  final_score: number;
+  [key: string]: unknown;
+}
+
+async function triggerIexecTask(agentAddress: string): Promise<{ scoreData: ScoreData, resultUrl: string } | null> {
   if (!whitelistedWalletPrivateKey) {
     console.error('WHITELISTED_WALLET_PRIVATE_KEY environment variable is not set.');
     return null;
@@ -66,17 +72,19 @@ async function triggerIexecTask(agentAddress: string): Promise<{ scoreData: any,
     const protectedData = await dataProtector.protectData({ data: { agentAddress } });
 
     console.log('📋 Fetching iExec orders...');
-    const apporderResult = await iexec.orderbook.fetchApporder({ app: iexecAppAddress });
-    const apporder = (apporderResult as any).order || apporderResult;
-    const workerpoolorder = await iexec.orderbook.fetchWorkerpoolorder({ category: apporder.category, minTag: 'tee' });
+    const apporderResult: unknown = await iexec.orderbook.fetchApporder(iexecAppAddress as never);
+    const apporder = (apporderResult as { order?: unknown }).order || apporderResult;
+    const apporderTyped = apporder as { category: number; appprice: number };
+    const workerpoolorderResult: unknown = await iexec.orderbook.fetchWorkerpoolorder({ category: apporderTyped.category } as never);
 
     console.log('📝 Creating request order...');
-    const workerpool = (workerpoolorder as any).order || workerpoolorder;
+    const workerpool = (workerpoolorderResult as { order?: unknown }).order || workerpoolorderResult;
+    const workerpoolTyped = workerpool as { workerpoolprice: number };
     const requestorderToSign = await iexec.order.createRequestorder({
       app: iexecAppAddress,
-      category: apporder.category,
-      appmaxprice: apporder.appprice,
-      workerpoolmaxprice: workerpool.workerpoolprice,
+      category: apporderTyped.category,
+      appmaxprice: apporderTyped.appprice,
+      workerpoolmaxprice: workerpoolTyped.workerpoolprice,
       requester: await iexecSigner.getAddress(),
       volume: 1,
       params: { iexec_args: agentAddress },
@@ -85,8 +93,8 @@ async function triggerIexecTask(agentAddress: string): Promise<{ scoreData: any,
     const requestorder = await iexec.order.signRequestorder(requestorderToSign);
 
     console.log('🤝 Matching orders...');
-    const deal = await iexec.order.matchOrders({ apporder, workerpoolorder, requestorder });
-    const taskId = await iexec.deal.computeTaskId(deal.dealid, 0);
+    const deal = await iexec.order.matchOrders({ apporder, workerpoolorder: workerpoolorderResult, requestorder } as never);
+    const taskId = await iexec.deal.computeTaskId((deal as { dealid: string }).dealid, 0);
 
     console.log('⏳ Waiting for task results, taskId:', taskId);
     const results = await iexec.task.fetchResults(taskId);
@@ -105,13 +113,14 @@ async function triggerIexecTask(agentAddress: string): Promise<{ scoreData: any,
         return { scoreData, resultUrl: results.url };
       }
     }
-  } catch (error: any) {
-    console.error('❌ Error triggering iExec task:', error);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('❌ Error triggering iExec task:', errorMessage);
   }
   return null;
 }
 
-async function publishScore(scoreData: any, jobOfferingContract: Contract, jobId: bigint, iexecResultUrl: string) {
+async function publishScore(scoreData: ScoreData, jobOfferingContract: Contract, jobId: bigint, iexecResultUrl: string) {
   if (!sellerAgentPrivateKey) {
     console.error('SELLER_AGENT_PRIVATE_KEY environment variable is not set.');
     return;
@@ -160,12 +169,14 @@ async function publishScore(scoreData: any, jobOfferingContract: Contract, jobId
 
     // Deliver the DeliverableMemo (provider creates the memo)
     console.log('📤 Sending DeliverableMemo...');
-    const deliverableMemo = await (jobOfferingContract.connect(providerWallet) as any).createMemo(jobId, fileuri, 1, false, 3);
+    const connectedContract = jobOfferingContract.connect(providerWallet) as Contract & { createMemo: (jobId: bigint, fileuri: string, arg3: number, arg4: boolean, arg5: number) => Promise<{ wait: () => Promise<void>; hash: string }> };
+    const deliverableMemo = await connectedContract.createMemo(jobId, fileuri, 1, false, 3);
     await deliverableMemo.wait();
     console.log('✅ DeliverableMemo sent:', deliverableMemo.hash);
 
-  } catch (error: any) {
-    console.error('❌ Error publishing score:', error);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('❌ Error publishing score:', errorMessage);
   }
 }
 
@@ -224,7 +235,8 @@ export function startAcpListener() {
 
         for (const event of events) {
           if (!('args' in event)) continue;
-          const { jobId, client, provider: providerAddr, evaluator } = event.args as any;
+          const args = event.args as unknown as { jobId: bigint; client: string; provider: string; evaluator: string };
+          const { jobId, client, provider: providerAddr, evaluator } = args;
           const jobKey = `${jobId.toString()}-${event.blockNumber}`;
 
           // Skip if already processed
@@ -263,8 +275,9 @@ export function startAcpListener() {
         toRemove.forEach(key => processedJobs.delete(key));
       }
 
-    } catch (error: any) {
-      console.error('⚠️  Polling error:', error.message);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error('⚠️  Polling error:', errorMessage);
     }
   }, pollInterval);
 

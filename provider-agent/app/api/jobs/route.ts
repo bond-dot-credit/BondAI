@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { JsonRpcProvider, Contract } from 'ethers';
+import { JsonRpcProvider, Contract, EventLog } from 'ethers';
 import JobOfferABI from '../../../contract/JobOffer_ABI';
 
 const jobOfferingAddress = '0x959591Bab069599cAbb2A72AA371503ba2d042FF';
@@ -21,9 +21,12 @@ export async function GET() {
     );
 
     // Filter for our jobs
-    const myJobs = events.filter((event: any) => {
-      const { provider: providerAddr } = event.args;
-      return providerAddr.toLowerCase() === sellerAgentAddress?.toLowerCase();
+    const myJobs = events.filter((event) => {
+      if (event instanceof EventLog) {
+        const { provider: providerAddr } = event.args;
+        return providerAddr.toLowerCase() === sellerAgentAddress?.toLowerCase();
+      }
+      return false;
     });
 
     let activeJobs = 0;
@@ -31,13 +34,15 @@ export async function GET() {
 
     // Check status of each job
     for (const event of myJobs) {
-      const { jobId } = event.args;
-      const job = await contract.jobs(jobId);
+      if (event instanceof EventLog) {
+        const { jobId } = event.args;
+        const job = await contract.jobs(jobId);
 
-      if (job.phase === 4) { // COMPLETED
-        completedJobs++;
-      } else if (job.phase !== 5) { // Not REJECTED
-        activeJobs++;
+        if (job.phase === 4) { // COMPLETED
+          completedJobs++;
+        } else if (job.phase !== 5) { // Not REJECTED
+          activeJobs++;
+        }
       }
     }
 
@@ -48,14 +53,15 @@ export async function GET() {
       rejectedJobs: myJobs.length - activeJobs - completedJobs
     });
 
-  } catch (error: any) {
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Error fetching job stats:', error);
     return NextResponse.json({
       totalJobs: 0,
       activeJobs: 0,
       completedJobs: 0,
       rejectedJobs: 0,
-      error: error.message
+      error: errorMessage
     }, { status: 500 });
   }
 }

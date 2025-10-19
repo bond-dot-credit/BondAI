@@ -12,7 +12,7 @@ const ERC8004Guide = () => {
       <div className="mb-6">
         <h3 className="text-2xl font-bold text-green-300 mb-2">ERC-8004 Reputation Registry</h3>
         <p className="text-gray-400">
-          After scoring in the TEE, we publish results to the ERC-8004 reputation standard using ChaosChain's infrastructure on Base Sepolia
+          After scoring in the TEE, we publish results to the ERC-8004 reputation standard using ChaosChain&apos;s infrastructure on Base Sepolia
         </p>
       </div>
 
@@ -65,7 +65,7 @@ const ERC8004Guide = () => {
                 <h4 className="font-semibold text-green-300">Score Published to ERC-8004</h4>
               </div>
               <p className="text-sm text-gray-400 mb-3">
-                The score is published to the ERC-8004 Reputation Registry using ChaosChain's infrastructure, making it verifiable and portable across ecosystems
+                The score is published to the ERC-8004 Reputation Registry using ChaosChain&apos;s infrastructure, making it verifiable and portable across ecosystems
               </p>
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-xs">
@@ -110,7 +110,7 @@ const ERC8004Guide = () => {
             <h4 className="font-semibold text-purple-300">ChaosChain Infrastructure</h4>
           </div>
           <p className="text-sm text-gray-400 mb-3">
-            We use ChaosChain's ERC-8004 reference implementation for trustless agent reputation
+            We use ChaosChain&apos;s ERC-8004 reference implementation for trustless agent reputation
           </p>
           <a
             href="https://github.com/ChaosChain/trustless-agents-erc-ri/tree/main/src"

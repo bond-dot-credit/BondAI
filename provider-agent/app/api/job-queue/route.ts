@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { JsonRpcProvider, Contract } from 'ethers';
+import { JsonRpcProvider, Contract, EventLog } from 'ethers';
 import JobOfferABI from '../../../contract/JobOffer_ABI';
 
 const jobOfferingAddress = '0x959591Bab069599cAbb2A72AA371503ba2d042FF';
@@ -19,13 +19,17 @@ export async function GET() {
       currentBlock
     );
 
-    const myJobs = events.filter((event: any) => {
-      const { provider: providerAddr } = event.args;
-      return providerAddr.toLowerCase() === sellerAgentAddress?.toLowerCase();
+    const myJobs = events.filter((event) => {
+      if (event instanceof EventLog) {
+        const { provider: providerAddr } = event.args;
+        return providerAddr.toLowerCase() === sellerAgentAddress?.toLowerCase();
+      }
+      return false;
     });
 
     const jobDetails = await Promise.all(
-      myJobs.slice(-10).reverse().map(async (event: any) => {
+      myJobs.slice(-10).reverse().map(async (event) => {
+        if (!(event instanceof EventLog)) return null;
         const { jobId, client } = event.args;
         const job = await contract.jobs(jobId);
         const block = await event.getBlock();
@@ -48,16 +52,17 @@ export async function GET() {
           status,
           score: status === 'Completed' ? `${Math.floor(Math.random() * 20) + 80}/100` : '--',
           processingTime: status === 'Completed' ? `${(Math.random() * 5 + 5).toFixed(1)}s` : '--',
-          timestamp: getTimeAgo(block.timestamp)
+          timestamp: getTimeAgo(Number(block.timestamp))
         };
       })
     );
 
-    return NextResponse.json({ jobs: jobDetails });
+    return NextResponse.json({ jobs: jobDetails.filter(job => job !== null) });
 
-  } catch (error: any) {
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Error fetching job queue:', error);
-    return NextResponse.json({ jobs: [], error: error.message }, { status: 500 });
+    return NextResponse.json({ jobs: [], error: errorMessage }, { status: 500 });
   }
 }
 

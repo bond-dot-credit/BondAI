@@ -45,13 +45,13 @@ const InfoSection = () => {
         <div className="bg-[#060010] border border-purple-500/10 rounded-lg p-4">
           <h4 className="text-sm font-semibold text-purple-300 mb-2">Step 3: Connect to Base Sepolia</h4>
           <p className="text-sm text-gray-400">
-            In Remix, go to the <span className="text-purple-300">"Deploy & Run Transactions"</span> tab and:
+            In Remix, go to the <span className="text-purple-300">&quot;Deploy & Run Transactions&quot;</span> tab and:
           </p>
           <ul className="text-sm text-gray-400 list-disc list-inside mt-2 space-y-1 ml-2">
             <li>Set Environment to <code className="bg-black/50 px-1 py-0.5 rounded text-xs">Injected Provider - MetaMask</code></li>
             <li>Connect to <span className="text-blue-300">Base Sepolia</span> network</li>
             <li>Paste our ACPSimple contract address: <code className="bg-black/50 px-1 py-0.5 rounded text-xs">0x959591Bab069599cAbb2A72AA371503ba2d042FF</code></li>
-            <li>Click <span className="text-orange-300">"At Address"</span> to load the deployed contract</li>
+            <li>Click <span className="text-orange-300">&quot;At Address&quot;</span> to load the deployed contract</li>
           </ul>
         </div>
 

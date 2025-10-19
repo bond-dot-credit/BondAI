@@ -24,7 +24,7 @@ const GizaScoringGuide = () => {
       </div>
 
       <p className="text-gray-400 mb-6">
-        Our Giza ML scoring runs in iExec's Trusted Execution Environment on Bellecour chain. Follow these steps to generate a confidential credit score:
+        Our Giza ML scoring runs in iExec&apos;s Trusted Execution Environment on Bellecour chain. Follow these steps to generate a confidential credit score:
       </p>
 
       <div className="space-y-4">
@@ -76,7 +76,7 @@ const GizaScoringGuide = () => {
                 <h4 className="font-semibold text-indigo-300">Create Protected Data</h4>
               </div>
               <p className="text-sm text-gray-400">
-                Upload your agent's behavioral data as protected data - it will be encrypted and only accessible inside the TEE
+                Upload your agent&apos;s behavioral data as protected data - it will be encrypted and only accessible inside the TEE
               </p>
             </div>
           </div>

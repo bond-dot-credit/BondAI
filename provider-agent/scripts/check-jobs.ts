@@ -1,4 +1,4 @@
-import { JsonRpcProvider, Contract } from 'ethers';
+import { JsonRpcProvider, Contract, EventLog } from 'ethers';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 import JobOfferABI from '../contract/JobOffer_ABI';
@@ -38,9 +38,12 @@ async function checkJobs() {
     console.log(`Found ${events.length} JobCreated events in recent blocks\n`);
 
     // Filter for jobs assigned to our provider
-    const myJobs = events.filter((event: any) => {
-      const { provider: providerAddr } = event.args;
-      return providerAddr.toLowerCase() === sellerAgentAddress?.toLowerCase();
+    const myJobs = events.filter((event) => {
+      if (event instanceof EventLog) {
+        const { provider: providerAddr } = event.args;
+        return providerAddr.toLowerCase() === sellerAgentAddress?.toLowerCase();
+      }
+      return false;
     });
 
     console.log(`Jobs assigned to me: ${myJobs.length}\n`);
@@ -49,6 +52,7 @@ async function checkJobs() {
       console.log('=== MY JOBS ===\n');
 
       for (const event of myJobs) {
+        if (!(event instanceof EventLog)) continue;
         const { jobId, client, provider: providerAddr, evaluator } = event.args;
 
         // Get job details
@@ -83,12 +87,15 @@ async function checkJobs() {
     // Also check ALL recent jobs to see what's happening
     console.log('\n=== ALL RECENT JOBS ===\n');
     for (const event of events.slice(-5)) { // Last 5 jobs
-      const { jobId, client, provider: providerAddr, evaluator } = event.args;
-      console.log(`Job ${jobId.toString()}: provider=${providerAddr}, block=${event.blockNumber}`);
+      if (event instanceof EventLog) {
+        const { jobId, client, provider: providerAddr, evaluator } = event.args;
+        console.log(`Job ${jobId.toString()}: provider=${providerAddr}, block=${event.blockNumber}`);
+      }
     }
 
-  } catch (error: any) {
-    console.error('Error checking jobs:', error);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Error checking jobs:', errorMessage);
   }
 }
 
