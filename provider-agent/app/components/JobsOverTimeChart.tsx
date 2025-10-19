@@ -16,7 +16,7 @@ const data = [
 
 const JobsOverTimeChart = () => {
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+    <div className="h-full">
       <h3 className="text-lg font-semibold mb-4">Jobs Over Time (7 Days)</h3>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>

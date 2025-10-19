@@ -10,7 +10,7 @@ const logs = [
 
 const ActivityLog = () => {
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-lg p-6 h-full">
+    <div className="h-full">
       <h3 className="text-lg font-semibold mb-4">Activity Log</h3>
       <div className="h-[60vh] overflow-y-auto font-mono text-xs">
         {logs.map((log, i) => (

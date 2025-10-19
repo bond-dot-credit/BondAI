@@ -31,42 +31,80 @@ const DEFAULT_SPOTLIGHT_RADIUS = 300;
 const DEFAULT_GLOW_COLOR = '132, 0, 255';
 const MOBILE_BREAKPOINT = 768;
 
-const cardData: BentoCardProps[] = [
+export interface BentoCardWithContentProps extends BentoCardProps {
+  children?: React.ReactNode;
+}
+
+import JobQueueTable from './JobQueueTable';
+import ActivityLog from './ActivityLog';
+import ScoreDistributionChart from './ScoreDistributionChart';
+import JobsOverTimeChart from './JobsOverTimeChart';
+import ProcessingTimeChart from './ProcessingTimeChart';
+import RevenueChart from './RevenueChart';
+
+const cardData: BentoCardWithContentProps[] = [
+  {
+    color: '#060010',
+    title: 'System',
+    description: 'Network: Base Sepolia\nAgent: Provider\nService: Giza Score',
+    label: 'Status',
+    textAutoHide: true
+  },
+  {
+    color: '#060010',
+    title: 'Metrics',
+    label: 'Performance',
+    textAutoHide: true,
+    children: (
+                    <div className="h-[300px]">
+                <ProcessingTimeChart />
+              </div>
+    )
+  },
+  {
+    color: '#060010',
+    title: 'Revenue',
+    label: 'Earnings',
+    textAutoHide: true,
+    children: (
+                    <div className="h-[300px]">
+                <RevenueChart />
+              </div>
+    )
+  },
+  {
+    color: '#060010',
+    title: 'Job Queue',
+    label: 'Monitor',
+    textAutoHide: false,
+    children: (
+      <div className="h-full">
+        <JobQueueTable />
+      </div>
+    )
+  },
   {
     color: '#060010',
     title: 'Analytics',
-    description: 'Track user behavior',
-    label: 'Insights'
+    label: 'Insights',
+    textAutoHide: false,
+    children: (
+      <div className="flex flex-col gap-4 h-full">
+        <ScoreDistributionChart />
+        <JobsOverTimeChart />
+      </div>
+    )
   },
   {
     color: '#060010',
-    title: 'Dashboard',
-    description: 'Centralized data view',
-    label: 'Overview'
-  },
-  {
-    color: '#060010',
-    title: 'Collaboration',
-    description: 'Work together seamlessly',
-    label: 'Teamwork'
-  },
-  {
-    color: '#060010',
-    title: 'Automation',
-    description: 'Streamline workflows',
-    label: 'Efficiency'
-  },
-  {
-    color: '#060010',
-    title: 'Integration',
-    description: 'Connect favorite tools',
-    label: 'Connectivity'
-  },
-  {
-    color: '#060010',
-    title: 'Security',
-    description: 'Enterprise-grade protection',
-    label: 'Protection'
+    title: 'Activity Log',
+    label: 'Events',
+    textAutoHide: false,
+    children: (
+      <div className="h-full">
+        <ActivityLog />
+      </div>
+    )
   }
 ];
 
@@ -493,12 +531,14 @@ const BentoCardGrid: React.FC<{
   children: React.ReactNode;
   gridRef?: React.RefObject<HTMLDivElement | null>;
 }> = ({ children, gridRef }) => (
-  <div
-    className="bento-section grid gap-2 p-3 max-w-[54rem] select-none relative"
-    style={{ fontSize: 'clamp(1rem, 0.9rem + 0.5vw, 1.5rem)' }}
-    ref={gridRef}
-  >
-    {children}
+  <div className="mx-auto px-4 max-w-[90rem] w-full">
+    <div
+      className="bento-section bento-grid select-none relative"
+      style={{ fontSize: 'clamp(1rem, 0.9rem + 0.5vw, 1.5rem)' }}
+      ref={gridRef}
+    >
+      {children}
+    </div>
   </div>
 );
 
@@ -517,7 +557,11 @@ const useMobileDetection = () => {
   return isMobile;
 };
 
-const MagicBento: React.FC<BentoProps> = ({
+export interface MagicBentoPropsWithChildren extends BentoProps {
+  cards?: BentoCardWithContentProps[];
+}
+
+const MagicBento: React.FC<MagicBentoPropsWithChildren> = ({
   textAutoHide = true,
   enableStars = true,
   enableSpotlight = true,
@@ -528,7 +572,8 @@ const MagicBento: React.FC<BentoProps> = ({
   enableTilt = false,
   glowColor = DEFAULT_GLOW_COLOR,
   clickEffect = true,
-  enableMagnetism = true
+  enableMagnetism = true,
+  cards = cardData
 }) => {
   const gridRef = useRef<HTMLDivElement>(null);
   const isMobile = useMobileDetection();
@@ -675,7 +720,7 @@ const MagicBento: React.FC<BentoProps> = ({
 
       <BentoCardGrid gridRef={gridRef}>
         <div className="card-responsive grid gap-2">
-          {cardData.map((card, index) => {
+          {cards.map((card, index) => {
             const baseClassName = `card flex flex-col justify-between relative aspect-[4/3] min-h-[200px] w-full max-w-full p-5 rounded-[20px] border border-solid font-light overflow-hidden transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[0_8px_25px_rgba(0,0,0,0.15)] ${
               enableBorderGlow ? 'card--border-glow' : ''
             }`;
@@ -703,18 +748,23 @@ const MagicBento: React.FC<BentoProps> = ({
                   clickEffect={clickEffect}
                   enableMagnetism={enableMagnetism}
                 >
-                  <div className="card__header flex justify-between gap-3 relative text-white">
-                    <span className="card__label text-base">{card.label}</span>
-                  </div>
-                  <div className="card__content flex flex-col relative text-white">
-                    <h3 className={`card__title font-normal text-base m-0 mb-1 ${textAutoHide ? 'text-clamp-1' : ''}`}>
-                      {card.title}
-                    </h3>
-                    <p
-                      className={`card__description text-xs leading-5 opacity-90 ${textAutoHide ? 'text-clamp-2' : ''}`}>
-                      {card.description}
-                    </p>
-                  </div>
+                  {card.children || (
+                    <>
+                      <div className="card__header flex justify-between gap-3 relative text-white">
+                        <span className="card__label text-base">{card.label}</span>
+                      </div>
+                      <div className="card__content flex flex-col relative text-white">
+                        <h3 className={`card__title font-normal text-base m-0 mb-1 ${textAutoHide ? 'text-clamp-1' : ''}`}>
+                          {card.title}
+                        </h3>
+                        <p
+                          className={`card__description text-xs leading-5 opacity-90 ${textAutoHide ? 'text-clamp-2' : ''}`}
+                          style={{ whiteSpace: 'pre-line' }}>
+                          {card.description}
+                        </p>
+                      </div>
+                    </>
+                  )}
                 </ParticleCard>
               );
             }
@@ -834,17 +884,22 @@ const MagicBento: React.FC<BentoProps> = ({
                   el.addEventListener('click', handleClick);
                 }}
               >
-                <div className="card__header flex justify-between gap-3 relative text-white">
-                  <span className="card__label text-base">{card.label}</span>
-                </div>
-                <div className="card__content flex flex-col relative text-white">
-                  <h3 className={`card__title font-normal text-base m-0 mb-1 ${textAutoHide ? 'text-clamp-1' : ''}`}>
-                    {card.title}
-                  </h3>
-                  <p className={`card__description text-xs leading-5 opacity-90 ${textAutoHide ? 'text-clamp-2' : ''}`}>
-                    {card.description}
-                  </p>
-                </div>
+                {card.children || (
+                  <>
+                    <div className="card__header flex justify-between gap-3 relative text-white">
+                      <span className="card__label text-base">{card.label}</span>
+                    </div>
+                    <div className="card__content flex flex-col relative text-white">
+                      <h3 className={`card__title font-normal text-base m-0 mb-1 ${textAutoHide ? 'text-clamp-1' : ''}`}>
+                        {card.title}
+                      </h3>
+                      <p className={`card__description text-xs leading-5 opacity-90 ${textAutoHide ? 'text-clamp-2' : ''}`}
+                         style={{ whiteSpace: 'pre-line' }}>
+                        {card.description}
+                      </p>
+                    </div>
+                  </>
+                )}
               </div>
             );
           })}

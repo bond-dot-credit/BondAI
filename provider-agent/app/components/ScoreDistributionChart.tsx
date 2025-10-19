@@ -13,7 +13,7 @@ const data = [
 
 const ScoreDistributionChart = () => {
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-lg p-6">
+    <div className="h-full">
       <h3 className="text-lg font-semibold mb-4">Score Distribution (Last 100 Jobs)</h3>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data}>
