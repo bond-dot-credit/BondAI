@@ -259,28 +259,28 @@ export default function Home() {
         </div>
 
         {/* Charts Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <div className="bg-[#0a0a0a] rounded-xl border border-purple-500/20 p-6">
-            <h3 className="text-lg font-semibold mb-4">Processing Time</h3>
-            <div className="aspect-[16/9] w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-8">
+          <div className="bg-[#0a0a0a] rounded-xl border border-purple-500/20 p-4 md:p-6">
+            <h3 className="text-base md:text-lg font-semibold mb-3 md:mb-4">Processing Time</h3>
+            <div className="w-full h-[250px] md:h-[300px]">
               <ProcessingTimeChart />
             </div>
           </div>
-          <div className="bg-[#0a0a0a] rounded-xl border border-purple-500/20 p-6">
-            <h3 className="text-lg font-semibold mb-4">Revenue</h3>
-            <div className="aspect-[16/9] w-full">
+          <div className="bg-[#0a0a0a] rounded-xl border border-purple-500/20 p-4 md:p-6">
+            <h3 className="text-base md:text-lg font-semibold mb-3 md:mb-4">Revenue</h3>
+            <div className="w-full h-[250px] md:h-[300px]">
               <RevenueChart />
             </div>
           </div>
-          <div className="bg-[#0a0a0a] rounded-xl border border-purple-500/20 p-6">
-            <h3 className="text-lg font-semibold mb-4">Score Distribution</h3>
-            <div className="aspect-[16/9] w-full">
+          <div className="bg-[#0a0a0a] rounded-xl border border-purple-500/20 p-4 md:p-6">
+            <h3 className="text-base md:text-lg font-semibold mb-3 md:mb-4">Score Distribution</h3>
+            <div className="w-full h-[250px] md:h-[300px]">
               <ScoreDistributionChart />
             </div>
           </div>
-          <div className="bg-[#0a0a0a] rounded-xl border border-purple-500/20 p-6">
-            <h3 className="text-lg font-semibold mb-4">Jobs Over Time</h3>
-            <div className="aspect-[16/9] w-full">
+          <div className="bg-[#0a0a0a] rounded-xl border border-purple-500/20 p-4 md:p-6">
+            <h3 className="text-base md:text-lg font-semibold mb-3 md:mb-4">Jobs Over Time</h3>
+            <div className="w-full h-[250px] md:h-[300px]">
               <JobsOverTimeChart />
             </div>
           </div>

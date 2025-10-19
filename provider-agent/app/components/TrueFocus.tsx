@@ -91,7 +91,7 @@ const TrueFocus: React.FC<TrueFocusProps> = ({
             style={
               {
                 fontFamily: 'var(--font-inter), Inter, system-ui, -apple-system, sans-serif',
-                fontSize: 'clamp(3rem, 8vw, 6rem)',
+                fontSize: 'clamp(2.5rem, 10vw, 6rem)',
                 fontWeight: 900,
                 letterSpacing: '-0.02em',
                 color: 'white',
@@ -133,31 +133,31 @@ const TrueFocus: React.FC<TrueFocusProps> = ({
         }
       >
         <span
-          className="absolute w-4 h-4 border-[3px] rounded-[3px] top-[-10px] left-[-10px] border-r-0 border-b-0"
+          className="absolute w-3 h-3 sm:w-4 sm:h-4 border-[2px] sm:border-[3px] rounded-[3px] top-[-8px] sm:top-[-10px] left-[-8px] sm:left-[-10px] border-r-0 border-b-0"
           style={{
             borderColor: 'var(--border-color)',
-            filter: 'drop-shadow(0 0 4px var(--border-color))'
+            filter: 'drop-shadow(0 0 3px var(--border-color))'
           }}
         ></span>
         <span
-          className="absolute w-4 h-4 border-[3px] rounded-[3px] top-[-10px] right-[-10px] border-l-0 border-b-0"
+          className="absolute w-3 h-3 sm:w-4 sm:h-4 border-[2px] sm:border-[3px] rounded-[3px] top-[-8px] sm:top-[-10px] right-[-8px] sm:right-[-10px] border-l-0 border-b-0"
           style={{
             borderColor: 'var(--border-color)',
-            filter: 'drop-shadow(0 0 4px var(--border-color))'
+            filter: 'drop-shadow(0 0 3px var(--border-color))'
           }}
         ></span>
         <span
-          className="absolute w-4 h-4 border-[3px] rounded-[3px] bottom-[-10px] left-[-10px] border-r-0 border-t-0"
+          className="absolute w-3 h-3 sm:w-4 sm:h-4 border-[2px] sm:border-[3px] rounded-[3px] bottom-[-8px] sm:bottom-[-10px] left-[-8px] sm:left-[-10px] border-r-0 border-t-0"
           style={{
             borderColor: 'var(--border-color)',
-            filter: 'drop-shadow(0 0 4px var(--border-color))'
+            filter: 'drop-shadow(0 0 3px var(--border-color))'
           }}
         ></span>
         <span
-          className="absolute w-4 h-4 border-[3px] rounded-[3px] bottom-[-10px] right-[-10px] border-l-0 border-t-0"
+          className="absolute w-3 h-3 sm:w-4 sm:h-4 border-[2px] sm:border-[3px] rounded-[3px] bottom-[-8px] sm:bottom-[-10px] right-[-8px] sm:right-[-10px] border-l-0 border-t-0"
           style={{
             borderColor: 'var(--border-color)',
-            filter: 'drop-shadow(0 0 4px var(--border-color))'
+            filter: 'drop-shadow(0 0 3px var(--border-color))'
           }}
         ></span>
       </motion.div>
