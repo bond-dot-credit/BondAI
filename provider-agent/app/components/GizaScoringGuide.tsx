@@ -10,7 +10,7 @@ const GizaScoringGuide = () => {
   return (
     <div className="bg-gradient-to-br from-indigo-900/10 to-purple-900/10 border border-indigo-500/20 rounded-xl p-8">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-2xl font-bold text-indigo-300">Run Giza Scoring in iExec TEE</h3>
+        <h3 className="text-2xl font-bold text-indigo-300">Step 2: Run Credit Scoring in iExec TEE</h3>
         <a
           href="https://bond-credit-nextjs.midmoussi.workers.dev/iexec"
           target="_blank"
@@ -24,7 +24,7 @@ const GizaScoringGuide = () => {
       </div>
 
       <p className="text-gray-400 mb-6">
-        Our Giza ML scoring runs in iExec&apos;s Trusted Execution Environment on Bellecour chain. Follow these steps to generate a confidential credit score:
+        Proprietary credit scoring algorithms run in iExec&apos;s Trusted Execution Environment on Bellecour chain. Agent data remains confidential throughout computation:
       </p>
 
       <div className="space-y-4">
