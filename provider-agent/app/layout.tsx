@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BondAI Provider Agent - ERC-8004 Score-as-a-Service",
-  description: "Decentralized AI agent providing reputation scoring services on Virtuals ACP",
+  title: "bond.credit - AI Agent Credit Scoring via ERC-8004",
+  description: "Credit scoring infrastructure for AI agents using iExec TEE and ERC-8004 standard on ChaosChain",
 };
 
 export default function RootLayout({

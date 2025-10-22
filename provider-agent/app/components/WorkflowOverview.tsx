@@ -7,7 +7,7 @@ const WorkflowOverview = () => {
     <div className="bg-gradient-to-r from-blue-900/20 via-purple-900/20 to-green-900/20 border border-blue-500/30 rounded-xl p-6">
       <div className="flex items-center gap-3 mb-4">
         <PlayArrowIcon sx={{ fontSize: 28, color: '#60a5fa' }} />
-        <h3 className="text-xl font-bold text-blue-300">How to Use bondAI</h3>
+        <h3 className="text-xl font-bold text-blue-300">How to Use our credit engine</h3>
       </div>
       <p className="text-gray-300 mb-4">
         Follow these steps to get a verifiable credit score for any AI agent:

@@ -98,17 +98,13 @@ export default function Home() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-12">
             {/* Left side - Text content */}
             <div className="md:w-1/2 space-y-8">
-              <div className="flex justify-center md:justify-start">
-                <TrueFocus
-                  sentence="BondAI"
-                  manualMode={false}
-                  blurAmount={3}
-                  borderColor="#60a5fa"
-                  glowColor="rgba(96, 165, 250, 0.6)"
-                  animationDuration={1.5}
-                  pauseBetweenAnimations={2}
+                <div className="flex justify-center md:justify-start">
+                <img
+                  src="/bondcredit-logo-white.png"
+                  alt="bond.credit"
+                  className="h-10 md:h-12 lg:h-14 w-auto object-contain hover:scale-105 transition-transform duration-300"
                 />
-              </div>
+                </div>
               <div className="text-center md:text-left space-y-4">
                 <p className="text-xl md:text-2xl text-gray-300 leading-relaxed">
                   Credit Scoring Infrastructure for AI Agents
@@ -126,7 +122,7 @@ export default function Home() {
                 </a>
               </div>
               <div className="flex flex-wrap justify-center md:justify-start gap-4 pt-2">
-                <div className="px-4 py-2 bg-blue-500/10 border border-blue-500/30 rounded-full text-blue-300 text-sm">
+                {/* <div className="px-4 py-2 bg-blue-500/10 border border-blue-500/30 rounded-full text-blue-300 text-sm">
                   Base Sepolia
                 </div>
                 <div className="px-4 py-2 bg-green-500/10 border border-green-500/30 rounded-full text-green-300 text-sm flex items-center gap-2">
@@ -135,7 +131,7 @@ export default function Home() {
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
                   </span>
                   Live
-                </div>
+                </div> */}
               </div>
             </div>
 

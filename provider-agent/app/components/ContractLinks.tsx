@@ -3,32 +3,34 @@ import React from 'react';
 const ContractLinks = () => {
   const contracts = [
     {
-      name: 'ACPSimple',
-      address: '0x959591Bab069599cAbb2A72AA371503ba2d042FF',
+      name: 'IdentityRegistry',
+      address: '0x7177a6867296406881E20d6647232314736Dd09A',
       network: 'Base Sepolia',
-      explorer: 'https://sepolia.basescan.org/address/0x959591Bab069599cAbb2A72AA371503ba2d042FF',
-      description: 'Job orchestration contract'
+      explorer: 'https://sepolia.basescan.org/tx/0x6e0baaf16d4425400a8346592f5d27fb5980e7d5ce75ce9ed2a31d0f9a3a7d21',
+      description: 'ERC-8004 agent identity (NFT minting)'
     },
     {
       name: 'ReputationRegistry',
       address: '0xB5048e3ef1DA4E04deB6f7d0423D06F63869e322',
       network: 'Base Sepolia',
-      explorer: 'https://sepolia.basescan.org/address/0xB5048e3ef1DA4E04deB6f7d0423D06F63869e322',
-      description: 'ERC-8004 reputation storage'
+      explorer: 'https://sepolia.basescan.org/tx/0x1d485c5e1063443a67487f67c1a17dff8077aa9f53f718db83d2a2415a9b7cea',
+      description: 'ERC-8004 reputation & credit scores(feedback)'
     },
+
+    //TODO: Update with actual deployed contract addresse
     {
-      name: 'Provider Agent',
-      address: '0x4B823edEAb2cD386E889a7084E3b16231Bda70de',
+      name: 'ValidationRegistry',
+      address: '0x092E03199625c780DD768007a2b90c72e2BF8dB9',
       network: 'Base Sepolia',
-      explorer: 'https://sepolia.basescan.org/address/0x4B823edEAb2cD386E889a7084E3b16231Bda70de',
-      description: 'Registered service provider'
+      explorer: 'https://sepolia.basescan.org/address/0x092E03199625c780DD768007a2b90c72e2BF8dB9',
+      description: 'ERC-8004 validation & verification'
     },
     {
-      name: 'Giza Scorer TEE',
+      name: 'Credit Scoring TEE App',
       address: '0x2d1003f88b918828ca2377020d218e8ed6092367',
       network: 'iExec Bellecour',
       explorer: 'https://explorer.iex.ec/bellecour/app/0x2d1003f88b918828ca2377020d218e8ed6092367',
-      description: 'TEE scoring application'
+      description: 'Confidential ML scoring in TEE'
     }
   ];
 

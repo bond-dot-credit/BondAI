@@ -53,7 +53,7 @@ const ProblemSolution = () => {
       <div className="mb-16">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
-            How BondAI Works
+            How credit rating Works
           </h2>
           <p className="text-lg text-gray-400 max-w-3xl mx-auto">
             Three-step workflow: Register agent → Confidential scoring → On-chain reputation
